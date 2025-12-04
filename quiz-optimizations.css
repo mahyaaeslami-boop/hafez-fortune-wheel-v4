@@ -1,0 +1,87 @@
+﻿/* Additional Quiz Optimizations for Better UX */
+
+/* Make quiz container more compact */
+.quiz-container {
+    max-width: 750px !important;
+}
+
+/* Optimize question card - no min-height, compact layout */
+.question-card {
+    padding: 1.5rem !important;
+    min-height: auto !important;
+}
+
+/* Reduce question text size */
+.question-text {
+    font-size: 1.3rem !important;
+    margin-bottom: 1rem !important;
+    line-height: 1.4 !important;
+}
+
+/* Compact answers */
+.answers-container {
+    gap: 0.6rem !important;
+}
+
+.answer-option {
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+}
+
+/* Make feedback compact */
+.feedback-container {
+    margin-top: 0.75rem !important;
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+}
+
+.feedback-message {
+    font-size: 1.1rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.feedback-explanation {
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+}
+
+/* CRITICAL: Make Next button always visible */
+.quiz-actions {
+    margin-top: 1rem !important;
+    padding: 1rem 0 !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background: linear-gradient(0deg, rgba(26, 26, 29, 0.98) 60%, rgba(26, 26, 29, 0.8) 80%, transparent 100%) !important;
+    z-index: 100 !important;
+}
+
+/* Admin Panel - Make it prominent and easy to find */
+.admin-access-btn-container {
+    text-align: center;
+    margin: 2rem 0 1.5rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(139, 21, 56, 0.2), rgba(107, 15, 26, 0.3));
+    border: 2px dashed var(--persian-gold);
+    border-radius: 15px;
+}
+
+.admin-access-btn {
+    background: linear-gradient(135deg, var(--persian-gold), var(--bronze)) !important;
+    border: 3px solid var(--primary-red) !important;
+    color: var(--ink) !important;
+    padding: 0.8rem 2.5rem !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4) !important;
+}
+
+.admin-access-btn:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6) !important;
+}
+
+/* Make admin panel more visible */
+#leaderboardSection {
+    border: 3px solid var(--persian-gold) !important;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3) !important;
+}
