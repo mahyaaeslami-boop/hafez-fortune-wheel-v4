@@ -486,6 +486,16 @@ function initFortuneWheel() {
     wheelCtx = wheelCanvas.getContext('2d');
     drawWheel();
     
+    // CTA Button to reveal wheel
+    const getFaalBtn = document.getElementById('getFaalButton');
+    if (getFaalBtn) {
+        getFaalBtn.addEventListener('click', function() {
+            document.querySelector('.fortune-cta').style.display = 'none';
+            document.getElementById('wheelContainer').style.display = 'block';
+            document.getElementById('wheelContainer').scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+    
     const spinButton = document.getElementById('spinButton');
     spinButton.addEventListener('click', spinWheel);
     
@@ -661,6 +671,12 @@ let score = 0;
 let quizTimer;
 let timeRemaining = 150; // 2.5 minutes in seconds
 let selectedQuestions = [];
+let participantName = '';
+let quizStartTime = null;
+let quizEndTime = null;
+
+// Leaderboard storage (localStorage)
+const LEADERBOARD_KEY = 'yalda_leaderboard';
 
 function initQuiz() {
     const startBtn = document.getElementById('startQuizBtn');
@@ -672,15 +688,38 @@ function initQuiz() {
     if (retakeBtn) {
         retakeBtn.addEventListener('click', resetQuiz);
     }
+    
+    // Leaderboard controls
+    const showLeaderboardBtn = document.getElementById('showLeaderboardBtn');
+    if (showLeaderboardBtn) {
+        showLeaderboardBtn.addEventListener('click', displayLeaderboard);
+    }
+    
+    const downloadLeaderboardBtn = document.getElementById('downloadLeaderboardBtn');
+    if (downloadLeaderboardBtn) {
+        downloadLeaderboardBtn.addEventListener('click', downloadLeaderboardData);
+    }
 }
 
 function startQuiz() {
+    // Get participant name
+    const nameInput = document.getElementById('participantName');
+    participantName = nameInput.value.trim();
+    
+    if (!participantName) {
+        nameInput.style.borderColor = '#DC143C';
+        nameInput.placeholder = 'Please enter your name to continue!';
+        nameInput.focus();
+        return;
+    }
+    
     // Select random 10 questions
     selectedQuestions = shuffleArray([...quizQuestions]).slice(0, 10);
     
     currentQuestionIndex = 0;
     score = 0;
     timeRemaining = 150;
+    quizStartTime = new Date();
     
     // Hide start screen, show game screen
     document.getElementById('quizStart').classList.add('hidden');
@@ -813,6 +852,11 @@ function showFeedback(isCorrect, explanation) {
 
 function endQuiz() {
     clearInterval(quizTimer);
+    quizEndTime = new Date();
+    const timeTaken = Math.round((quizEndTime - quizStartTime) / 1000); // seconds
+    
+    // Save to leaderboard
+    saveToLeaderboard(participantName, score, selectedQuestions.length, timeTaken);
     
     // Hide game screen, show results
     document.getElementById('quizGame').classList.add('hidden');
@@ -825,12 +869,15 @@ function endQuiz() {
     // Create results content
     let resultsHTML = `
         <div class="results-icon">${passed ? '🏆' : '📚'}</div>
-        <h3 class="results-title">${passed ? 'Congratulations!' : 'Good Effort!'}</h3>
+        <h3 class="results-title">Well Done, ${participantName}!</h3>
         <p class="results-score">You scored ${score} out of ${selectedQuestions.length}</p>
         <p class="results-message">
+            Time taken: ${Math.floor(timeTaken / 60)}m ${timeTaken % 60}s
+        </p>
+        <p class="results-message">
             ${passed 
-                ? 'Excellent! You have demonstrated a strong understanding of Yalda Night and Persian culture.' 
-                : 'Keep learning! Yalda Night has many beautiful traditions to discover.'}
+                ? 'Congratulations! You have demonstrated exceptional understanding of Yalda Night and Persian culture. You are now a certified Yalda Cultural Expert!' 
+                : 'Great effort! Yalda Night has many beautiful traditions to discover. Review the educational content and try again to improve your score.'}
         </p>
     `;
     
@@ -838,7 +885,8 @@ function endQuiz() {
         resultsHTML += `
             <div class="certificate-badge">
                 <div class="certificate-title">🎓 Yalda Cultural Expert</div>
-                <div class="certificate-text">You have earned this certificate of knowledge</div>
+                <div class="certificate-text">Awarded to ${participantName}</div>
+                <div class="certificate-text">${new Date().toLocaleDateString()}</div>
             </div>
         `;
     }
@@ -853,6 +901,10 @@ function endQuiz() {
     `;
     
     document.getElementById('resultsContent').innerHTML = resultsHTML;
+    
+    // Show leaderboard section and download button
+    document.getElementById('leaderboardSection').style.display = 'block';
+    document.getElementById('downloadLeaderboardBtn').style.display = 'inline-block';
     
     // Scroll to results
     document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
@@ -869,6 +921,14 @@ function resetQuiz() {
     score = 0;
     timeRemaining = 150;
     selectedQuestions = [];
+    participantName = '';
+    
+    // Clear name input
+    const nameInput = document.getElementById('participantName');
+    if (nameInput) {
+        nameInput.value = '';
+        nameInput.style.borderColor = 'var(--pomegranate)';
+    }
     
     // Show start screen
     document.getElementById('quizStart').classList.remove('hidden');
@@ -877,6 +937,119 @@ function resetQuiz() {
     
     // Scroll to quiz section
     document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ========================================
+// LEADERBOARD MANAGEMENT
+// ========================================
+function saveToLeaderboard(name, score, totalQuestions, timeTaken) {
+    const leaderboard = getLeaderboard();
+    
+    const entry = {
+        name: name,
+        score: score,
+        totalQuestions: totalQuestions,
+        percentage: ((score / totalQuestions) * 100).toFixed(1),
+        timeTaken: timeTaken,
+        date: new Date().toISOString(),
+        timestamp: Date.now()
+    };
+    
+    leaderboard.push(entry);
+    
+    // Sort by score (descending), then by time taken (ascending)
+    leaderboard.sort((a, b) => {
+        if (b.score !== a.score) {
+            return b.score - a.score;
+        }
+        return a.timeTaken - b.timeTaken;
+    });
+    
+    localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(leaderboard));
+}
+
+function getLeaderboard() {
+    const data = localStorage.getItem(LEADERBOARD_KEY);
+    return data ? JSON.parse(data) : [];
+}
+
+function displayLeaderboard() {
+    const leaderboard = getLeaderboard();
+    const displayDiv = document.getElementById('leaderboardDisplay');
+    
+    if (leaderboard.length === 0) {
+        displayDiv.innerHTML = '<p class="leaderboard-empty">No quiz results yet. Be the first to take the challenge!</p>';
+    } else {
+        let tableHTML = `
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Time</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        leaderboard.forEach((entry, index) => {
+            const rank = index + 1;
+            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+            const date = new Date(entry.date).toLocaleDateString();
+            const timeFormatted = `${Math.floor(entry.timeTaken / 60)}:${(entry.timeTaken % 60).toString().padStart(2, '0')}`;
+            
+            tableHTML += `
+                <tr>
+                    <td class="leaderboard-rank">${medal}</td>
+                    <td>${entry.name}</td>
+                    <td>${entry.score}/${entry.totalQuestions}</td>
+                    <td>${entry.percentage}%</td>
+                    <td>${timeFormatted}</td>
+                    <td>${date}</td>
+                </tr>
+            `;
+        });
+        
+        tableHTML += `
+                </tbody>
+            </table>
+        `;
+        
+        displayDiv.innerHTML = tableHTML;
+    }
+    
+    displayDiv.style.display = 'block';
+    displayDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function downloadLeaderboardData() {
+    const leaderboard = getLeaderboard();
+    
+    if (leaderboard.length === 0) {
+        alert('No data to download yet!');
+        return;
+    }
+    
+    // Create CSV content
+    let csvContent = 'Rank,Name,Score,Total Questions,Percentage,Time Taken (seconds),Date\\n';
+    
+    leaderboard.forEach((entry, index) => {
+        csvContent += `${index + 1},${entry.name},${entry.score},${entry.totalQuestions},${entry.percentage}%,${entry.timeTaken},${new Date(entry.date).toLocaleString()}\\n`;
+    });
+    
+    // Create download
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `yalda-quiz-leaderboard-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
 }
 
 // ========================================
