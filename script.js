@@ -486,6 +486,9 @@ function initFortuneWheel() {
     wheelCtx = wheelCanvas.getContext('2d');
     drawWheel();
     
+    // Add magical particle effect around wheel
+    createWheelParticles();
+    
     // CTA Button to reveal wheel
     const getFaalBtn = document.getElementById('getFaalButton');
     if (getFaalBtn) {
@@ -514,6 +517,50 @@ function initFortuneWheel() {
                 document.getElementById('wheel').scrollIntoView({ behavior: 'smooth' });
             }, 300);
         });
+    }
+}
+
+// Create magical floating particles around wheel
+function createWheelParticles() {
+    const wheelWrapper = document.querySelector('.wheel-wrapper');
+    if (!wheelWrapper) return;
+    
+    const particleContainer = document.createElement('div');
+    particleContainer.style.position = 'absolute';
+    particleContainer.style.top = '0';
+    particleContainer.style.left = '0';
+    particleContainer.style.width = '100%';
+    particleContainer.style.height = '100%';
+    particleContainer.style.pointerEvents = 'none';
+    particleContainer.style.overflow = 'visible';
+    wheelWrapper.appendChild(particleContainer);
+    
+    // Create 12 magical particles
+    for (let i = 0; i < 12; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'magic-particle';
+        
+        // Randomize starting position around wheel
+        const angle = (i / 12) * Math.PI * 2;
+        const distance = 45 + Math.random() * 15; // Distance from center
+        const x = 50 + Math.cos(angle) * distance;
+        const y = 50 + Math.sin(angle) * distance;
+        
+        particle.style.cssText = `
+            position: absolute;
+            width: ${4 + Math.random() * 4}px;
+            height: ${4 + Math.random() * 4}px;
+            background: radial-gradient(circle, ${i % 2 === 0 ? '#D4AF37' : '#C41E3A'}, transparent);
+            border-radius: 50%;
+            left: ${x}%;
+            top: ${y}%;
+            animation: float${i % 3} ${3 + Math.random() * 2}s ease-in-out infinite;
+            animation-delay: ${Math.random() * 2}s;
+            opacity: ${0.4 + Math.random() * 0.4};
+            box-shadow: 0 0 ${8 + Math.random() * 8}px ${i % 2 === 0 ? '#D4AF37' : '#C41E3A'};
+        `;
+        
+        particleContainer.appendChild(particle);
     }
 }
 
@@ -689,7 +736,13 @@ function initQuiz() {
         retakeBtn.addEventListener('click', resetQuiz);
     }
     
-    // Leaderboard controls
+    // Admin authentication
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    if (adminLoginBtn) {
+        adminLoginBtn.addEventListener('click', checkAdminPassword);
+    }
+    
+    // Leaderboard controls (admin only)
     const showLeaderboardBtn = document.getElementById('showLeaderboardBtn');
     if (showLeaderboardBtn) {
         showLeaderboardBtn.addEventListener('click', displayLeaderboard);
@@ -698,6 +751,27 @@ function initQuiz() {
     const downloadLeaderboardBtn = document.getElementById('downloadLeaderboardBtn');
     if (downloadLeaderboardBtn) {
         downloadLeaderboardBtn.addEventListener('click', downloadLeaderboardData);
+    }
+}
+
+// Admin password check
+function checkAdminPassword() {
+    const passwordInput = document.getElementById('adminPassword');
+    const password = passwordInput.value;
+    
+    // Simple password check (change 'mahya2024' to your desired password)
+    if (password === 'mahya2024') {
+        document.getElementById('adminPasswordSection').style.display = 'none';
+        document.getElementById('adminControls').style.display = 'flex';
+        alert('✅ Admin access granted!');
+    } else {
+        passwordInput.value = '';
+        passwordInput.style.borderColor = '#DC143C';
+        passwordInput.placeholder = 'Incorrect password. Try again.';
+        setTimeout(() => {
+            passwordInput.placeholder = 'Admin Password';
+            passwordInput.style.borderColor = 'var(--gold)';
+        }, 2000);
     }
 }
 
@@ -902,9 +976,8 @@ function endQuiz() {
     
     document.getElementById('resultsContent').innerHTML = resultsHTML;
     
-    // Show leaderboard section and download button
-    document.getElementById('leaderboardSection').style.display = 'block';
-    document.getElementById('downloadLeaderboardBtn').style.display = 'inline-block';
+    // Show admin leaderboard section (hidden by default, requires password)
+    // Removed public display - admin only access now
     
     // Scroll to results
     document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
@@ -940,11 +1013,9 @@ function resetQuiz() {
 }
 
 // ========================================
-// LEADERBOARD MANAGEMENT
+// LEADERBOARD MANAGEMENT - Admin Email Submission
 // ========================================
 function saveToLeaderboard(name, score, totalQuestions, timeTaken) {
-    const leaderboard = getLeaderboard();
-    
     const entry = {
         name: name,
         score: score,
@@ -955,6 +1026,11 @@ function saveToLeaderboard(name, score, totalQuestions, timeTaken) {
         timestamp: Date.now()
     };
     
+    // Send data to admin via EmailJS
+    sendToAdmin(entry);
+    
+    // Also save locally as backup
+    const leaderboard = getLeaderboard();
     leaderboard.push(entry);
     
     // Sort by score (descending), then by time taken (ascending)
@@ -966,6 +1042,39 @@ function saveToLeaderboard(name, score, totalQuestions, timeTaken) {
     });
     
     localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(leaderboard));
+}
+
+function sendToAdmin(entry) {
+    // Using FormSubmit.co for form submission (no registration needed)
+    // Replace with your actual email in production
+    const formData = {
+        participant_name: entry.name,
+        score: `${entry.score}/${entry.totalQuestions}`,
+        percentage: entry.percentage + '%',
+        time_taken: formatTime(entry.timeTaken),
+        date: new Date(entry.date).toLocaleString(),
+        _subject: `New Yalda Quiz Result from ${entry.name}`,
+        _template: 'table'
+    };
+    
+    // Send to FormSubmit (replace with your email)
+    fetch('https://formsubmit.co/ajax/mahya.eslami@example.com', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => console.log('Quiz result sent to admin successfully'))
+    .catch(error => console.error('Error sending to admin:', error));
+}
+
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
 function getLeaderboard() {
