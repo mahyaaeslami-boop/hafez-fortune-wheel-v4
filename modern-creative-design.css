@@ -1,0 +1,404 @@
+﻿/* ========================================
+   MODERN CREATIVE UI/UX REDESIGN - V4
+   Cutting-Edge Design with Exceptional UX
+   ======================================== */
+
+/* Reset and Modern Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Enhanced Color System - Modern Persian Palette */
+:root {
+    --deep-night: #0a0e27;
+    --royal-purple: #2d1b69;
+    --pomegranate: #d32f2f;
+    --sunset-orange: #ff6f00;
+    --golden: #ffd700;
+    --turquoise: #00bcd4;
+    --rose-gold: #b76e79;
+    --soft-cream: #fff8e7;
+    --glass-white: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.18);
+}
+
+/* Modern Glassmorphism Hero */
+.hero-section {
+    background: 
+        radial-gradient(ellipse at top, rgba(45, 27, 105, 0.4), transparent),
+        radial-gradient(ellipse at bottom, rgba(211, 47, 47, 0.3), transparent),
+        linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%) !important;
+    min-height: 100vh !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background-attachment: fixed !important;
+}
+
+/* Animated Gradient Orbs */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 111, 0, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    top: -200px;
+    right: -200px;
+    animation: float 20s ease-in-out infinite;
+    filter: blur(80px);
+    z-index: 0;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(0, 188, 212, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    bottom: -150px;
+    left: -150px;
+    animation: float 15s ease-in-out infinite reverse;
+    filter: blur(90px);
+    z-index: 0;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(50px, -50px) scale(1.1); }
+    66% { transform: translate(-50px, 50px) scale(0.9); }
+}
+
+/* Glass Card System */
+.glass-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 24px !important;
+    box-shadow: 
+        0 8px 32px 0 rgba(0, 0, 0, 0.37),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Modern Hero Typography */
+.hero-title {
+    font-size: clamp(3rem, 8vw, 6rem) !important;
+    font-weight: 800 !important;
+    background: linear-gradient(135deg, #ffd700 0%, #ff6f00 50%, #d32f2f 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none !important;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    position: relative;
+    z-index: 2;
+    animation: fadeInDown 1s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Redesigned About Section - Card Grid */
+.about-section {
+    background: linear-gradient(180deg, #0a0e27 0%, #16213e 100%) !important;
+    padding: 100px 0 !important;
+}
+
+.about-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    gap: 2rem !important;
+    margin-top: 3rem !important;
+}
+
+.about-card,
+.story-card {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+    padding: 2.5rem !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-card::before,
+.story-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--golden), var(--turquoise), var(--pomegranate));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+}
+
+.about-card:hover::before,
+.story-card:hover::before {
+    transform: scaleX(1);
+}
+
+.about-card:hover,
+.story-card:hover {
+    transform: translateY(-12px) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
+    box-shadow: 
+        0 20px 60px rgba(255, 215, 0, 0.2),
+        0 0 40px rgba(0, 188, 212, 0.1) !important;
+}
+
+.card-icon {
+    font-size: 3.5rem !important;
+    margin-bottom: 1.5rem !important;
+    display: inline-block;
+    filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.4));
+    transition: all 0.3s ease;
+}
+
+.about-card:hover .card-icon,
+.story-card:hover .card-icon {
+    transform: scale(1.2) rotate(10deg);
+    filter: drop-shadow(0 8px 20px rgba(255, 215, 0, 0.6));
+}
+
+/* Modern Fortune Wheel Container */
+.wheel-section {
+    background: 
+        radial-gradient(ellipse at center, rgba(211, 47, 47, 0.15), transparent),
+        linear-gradient(180deg, #16213e 0%, #0a0e27 100%) !important;
+    padding: 80px 0 !important;
+}
+
+.wheel-wrapper {
+    position: relative;
+    filter: drop-shadow(0 0 60px rgba(255, 215, 0, 0.4)) !important;
+}
+
+/* Futuristic CTA Button */
+.get-faal-button,
+.quiz-button,
+.admin-access-btn {
+    background: linear-gradient(135deg, #ffd700 0%, #ff6f00 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 50px !important;
+    padding: 1.2rem 3rem !important;
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    color: #0a0e27 !important;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease !important;
+    box-shadow: 
+        0 10px 30px rgba(255, 215, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.get-faal-button::before,
+.quiz-button::before,
+.admin-access-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.get-faal-button:hover::before,
+.quiz-button:hover::before,
+.admin-access-btn:hover::before {
+    left: 100%;
+}
+
+.get-faal-button:hover,
+.quiz-button:hover,
+.admin-access-btn:hover {
+    transform: translateY(-4px) scale(1.05) !important;
+    box-shadow: 
+        0 15px 50px rgba(255, 215, 0, 0.6),
+        0 0 40px rgba(255, 111, 0, 0.4) !important;
+}
+
+/* Modern Quiz Section */
+.quiz-section {
+    background: linear-gradient(180deg, #0a0e27 0%, #1a1a2e 100%) !important;
+    padding: 80px 0 !important;
+}
+
+.quiz-intro,
+.question-container {
+    background: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(25px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 24px !important;
+    padding: 2.5rem !important;
+    box-shadow: 
+        0 15px 50px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.answer-option {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    padding: 1.2rem 1.5rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.answer-option::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: linear-gradient(180deg, var(--golden), var(--turquoise));
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.answer-option:hover {
+    background: rgba(255, 215, 0, 0.1) !important;
+    border-color: var(--golden) !important;
+    transform: translateX(8px) !important;
+}
+
+.answer-option:hover::before {
+    transform: scaleY(1);
+}
+
+.answer-option.selected {
+    background: rgba(255, 215, 0, 0.15) !important;
+    border-color: var(--golden) !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3) !important;
+}
+
+/* Contact Section - Modern Layout */
+.contact-section {
+    background: 
+        radial-gradient(ellipse at top right, rgba(0, 188, 212, 0.15), transparent),
+        linear-gradient(180deg, #1a1a2e 0%, #0a0e27 100%) !important;
+    padding: 80px 0 !important;
+}
+
+.contact-card {
+    background: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    padding: 2rem !important;
+    transition: all 0.4s ease !important;
+}
+
+.contact-card:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    transform: translateY(-8px) !important;
+    box-shadow: 0 15px 40px rgba(255, 215, 0, 0.2) !important;
+}
+
+/* Modern Footer */
+.main-footer {
+    background: linear-gradient(180deg, #0a0e27 0%, #000000 100%) !important;
+    border-top: 1px solid rgba(255, 215, 0, 0.2) !important;
+    padding: 60px 0 40px !important;
+}
+
+/* Particle Effect Enhancement */
+.magic-particle {
+    background: radial-gradient(circle, var(--golden), transparent) !important;
+    box-shadow: 
+        0 0 10px var(--golden),
+        0 0 20px var(--turquoise) !important;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+}
+
+/* Section Fade-in on Scroll */
+.content-section {
+    opacity: 0;
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modern Typography */
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+/* Refined Section Titles */
+.section-title {
+    font-size: clamp(2.5rem, 5vw, 4rem) !important;
+    font-weight: 800 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #ffd700 50%, #00bcd4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 3rem !important;
+    text-align: center;
+}
+
+/* Premium Admin Panel */
+.admin-access-btn-container {
+    background: rgba(255, 215, 0, 0.05) !important;
+    backdrop-filter: blur(15px) !important;
+    border: 2px solid rgba(255, 215, 0, 0.2) !important;
+    border-radius: 20px !important;
+    padding: 2rem !important;
+    margin: 2rem 0 !important;
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+    .about-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem !important;
+    }
+}
